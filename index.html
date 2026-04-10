@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Recovery Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+    input, select {
+      width: 100%;
+      padding: 5px;
+    }
+    .btn {
+      margin: 10px 5px;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .add { background: #27ae60; color: white; }
+    .reset { background: #c0392b; color: white; }
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Attendance Recovery Calculator</h1>
+
+<button class="btn add" onclick="addRow()">+ Add Class</button>
+<button class="btn reset" onclick="resetTable()">Reset</button>
+
+<table id="calcTable">
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th>Class Type</th>
+      <th>Course Length</th>
+      <th>Total Absences</th>
+      <th>FT</th>
+      <th>PA</th>
+      <th>HMBD</th>
+      <th>HBSD</th>
+      <th>AH</th>
+      <th>REC</th>
+      <th>Hours Owed</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="total">
+  Total Hours to Recover: <span id="totalHours">0</span>
+</div>
+
+<script>
+function addRow() {
+  let table = document.querySelector("#calcTable tbody");
+  let row = document.createElement("tr");
+
+  row.innerHTML = `
+    <td><input></td>
+    <td>
+      <select>
+        <option>Semester</option>
+        <option>Year</option>
+      </select>
+    </td>
+    <td>
+      <select>
+        <option>Skinny</option>
+        <option>Block</option>
+      </select>
+    </td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td><input type="number" value="0"></td>
+    <td class="hours">0</td>
+  `;
+
+  table.appendChild(row);
+
+  row.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", calculate);
+  });
+}
+
+function calculate() {
+  let rows = document.querySelectorAll("#calcTable tbody tr");
+  let total = 0;
+
+  rows.forEach(row => {
+    let cells = row.querySelectorAll("input, select");
+
+    let type = cells[1].value;
+    let length = cells[2].value;
+
+    let totalAbs = parseFloat(cells[3].value) || 0;
+    let codes = 0;
+
+    for (let i = 4; i <= 9; i++) {
+      codes += parseFloat(cells[i].value) || 0;
+    }
+
+    let adjusted = Math.max(0, totalAbs - codes);
+    let allowed = (type === "Semester") ? 5 : 10;
+    let owed = Math.max(0, adjusted - allowed);
+    let minutes = (length === "Skinny" ? 45 : 90) * owed;
+    let hours = Math.ceil((minutes / 60) * 2) / 2;
+
+    row.querySelector(".hours").innerText = hours;
+    total += hours;
+  });
+
+  document.getElementById("totalHours").innerText = total;
+}
+
+function resetTable() {
+  document.querySelector("#calcTable tbody").innerHTML = "";
+  document.getElementById("totalHours").innerText = 0;
+}
+
+// Start with one row
+addRow();
+</script>
+
+</body>
+</html>
