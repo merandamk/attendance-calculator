@@ -78,10 +78,10 @@ Use this calculator to determine your attendance recovery needs. Click "Add Clas
       <th>Class Type</th>
       <th>Course Length</th>
       <th>Total Absences</th>
-      <th># of FT Coded Days </th>
-      <th># of PA Coded Days</th>
-      <th># of AH Coded Days</th>
-      <th># of REC Coded Days </th>
+      <th>FT</th>
+      <th>PA</th>
+      <th>AH</th>
+      <th>REC</th>
       <th>Class Periods Owed</th>
       <th>Hours Owed</th>
     </tr>
@@ -117,8 +117,6 @@ function addRow() {
     <td><input type="number" value="0"></td>
     <td><input type="number" value="0"></td>
     <td><input type="number" value="0"></td>
-    <td><input type="number" value="0"></td>
-    <td><input type="number" value="0"></td>
     <td class="periods">0</td>
     <td class="hours">0</td>
   `;
@@ -141,9 +139,10 @@ function calculate() {
     let length = cells[2].value;
 
     let totalAbs = parseFloat(cells[3].value) || 0;
-    let codes = 0;
 
-    for (let i = 4; i <= 9; i++) {
+    // Updated codes: FT, PA, AH, REC only
+    let codes = 0;
+    for (let i = 4; i <= 7; i++) {
       codes += parseFloat(cells[i].value) || 0;
     }
 
